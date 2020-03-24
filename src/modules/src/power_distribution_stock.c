@@ -35,6 +35,7 @@
 #include "motors.h"
 #include "debug.h"
 
+static bool motorEnable = true;
 static bool motorSetEnable = false;
 
 static struct {
@@ -95,21 +96,28 @@ void powerDistribution(const control_t *control)
                                control->yaw);
   #endif
 
-  if (motorSetEnable)
+  if (motorEnable)
   {
-    motorsSetRatio(MOTOR_M1, motorPowerSet.m1);
-    motorsSetRatio(MOTOR_M2, motorPowerSet.m2);
-    motorsSetRatio(MOTOR_M3, motorPowerSet.m3);
-    motorsSetRatio(MOTOR_M4, motorPowerSet.m4);
-  }
-  else
-  {
-    motorsSetRatio(MOTOR_M1, motorPower.m1);
-    motorsSetRatio(MOTOR_M2, motorPower.m2);
-    motorsSetRatio(MOTOR_M3, motorPower.m3);
-    motorsSetRatio(MOTOR_M4, motorPower.m4);
+    if (motorSetEnable)
+    {
+      motorsSetRatio(MOTOR_M1, motorPowerSet.m1);
+      motorsSetRatio(MOTOR_M2, motorPowerSet.m2);
+      motorsSetRatio(MOTOR_M3, motorPowerSet.m3);
+      motorsSetRatio(MOTOR_M4, motorPowerSet.m4);
+    }
+    else
+    {
+      motorsSetRatio(MOTOR_M1, motorPower.m1);
+      motorsSetRatio(MOTOR_M2, motorPower.m2);
+      motorsSetRatio(MOTOR_M3, motorPower.m3);
+      motorsSetRatio(MOTOR_M4, motorPower.m4);
+    }
   }
 }
+
+PARAM_GROUP_START(sitl)
+PARAM_ADD(PARAM_UINT8, motorEnable, &motorEnable)
+PARAM_GROUP_STOP(sitl)
 
 PARAM_GROUP_START(motorPowerSet)
 PARAM_ADD(PARAM_UINT8, enable, &motorSetEnable)
